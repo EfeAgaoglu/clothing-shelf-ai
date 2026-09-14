@@ -1,0 +1,11 @@
+path: data/fashionpedia_balanced_10k
+train: images/train
+val: images/val
+names:
+  0: top
+  1: outwear
+  2: sleeveless_top
+  3: shorts
+  4: trousers
+  5: skirt
+  6: dress

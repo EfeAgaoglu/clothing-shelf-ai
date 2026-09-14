@@ -1,0 +1,12 @@
+# Relative to this YAML; scripts/train_shelf.py resolves the absolute paths.
+path: data/shelf_dataset
+train: images/train
+val: images/val
+names:
+  0: top
+  1: outwear
+  2: sleeveless_top
+  3: shorts
+  4: trousers
+  5: skirt
+  6: dress

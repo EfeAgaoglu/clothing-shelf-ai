@@ -1,0 +1,23 @@
+# Local Python environment and generated files
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Datasets and source archives are downloaded or transferred separately.
+# Converted Fashionpedia images are absolute symlinks and cannot be cloned portably.
+/data/
+
+# Training logs, predictions and checkpoints are generated locally.
+# The two essential best.pt files are staged explicitly for the initial commit.
+/runs/
+/debug_7class/
+/debug_labels/
+/debug_fashionpedia/
+/debug_internet_shelf/
+
+# The generic pre-training weight can be downloaded again by Ultralytics.
+/yolo26l-seg.pt

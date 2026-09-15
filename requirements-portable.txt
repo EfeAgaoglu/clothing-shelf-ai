@@ -1,0 +1,5 @@
+# Install torch and torchvision separately for the destination device.
+# Keep the same Ultralytics version as the saved checkpoints.
+ultralytics==8.4.144
+Pillow>=10
+PyYAML>=6

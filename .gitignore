@@ -1,5 +1,6 @@
 # Local Python environment and generated files
 .venv/
+/transfer/
 __pycache__/
 *.py[cod]
 .DS_Store

@@ -3,6 +3,7 @@
 YOLO26l-seg ile yedi giysi sınıfı (`top`, `outwear`, `sleeveless_top`, `shorts`, `trousers`, `skirt`, `dress`) için segmentasyon projesi. DeepFashion2 başlangıç modeli ve Fashionpedia 10k/1 epoch deneme ağırlıkları depoda bulunur. Büyük eğitim datasetleri depoya dahil değildir.
 
 - [Başka cihazda kurulum ve devam etme](README_GITHUB.md)
+- [Windows AMD bilgisayarda devam](WINDOWS_CONTINUE.md)
 - [Raf dataseti ve eğitim rehberi](README_SHELF.md)
 - [Proje incelemesi](PROJECT_REVIEW.md)
 

@@ -1,5 +1,7 @@
 # Başka cihazda devam etme
 
+Windows RX 6700 XT / Ryzen 5 3600X için [Windows rehberini](WINDOWS_CONTINUE.md) kullanın. Aşağıdaki Unix komutları yerine PowerShell komutları ve bağlantısız dataset taşıma adımları orada bulunur.
+
 Bu depo kodu, YAML yapılandırmalarını, küçük test görsellerini ve iki gerekli eğitilmiş `best.pt` dosyasını taşır. `.venv`, DeepFashion2/Fashionpedia datasetleri, indirilen arşivler, dönüştürülmüş görseller ve diğer eğitim çıktıları GitHub'a konmaz. Özellikle Fashionpedia dönüşümündeki görseller bu bilgisayardaki mutlak yollara işaret eden sembolik bağlantılardır; doğrudan başka cihaza kopyalanmaları güvenilir değildir.
 
 ## Depodaki ağırlıklar

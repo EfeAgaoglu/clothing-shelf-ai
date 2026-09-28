@@ -8,7 +8,7 @@ from shelf_utils import ROOT, DEFAULT_MODEL, read_config, validate_dataset, load
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data', default='shelf_7class.yaml')
+    parser.add_argument('--data', default='shelf.yaml')
     parser.add_argument('--model', default=str(DEFAULT_MODEL))
     parser.add_argument('--split', choices=['val', 'test'], default='val')
     parser.add_argument('--device', default='auto')

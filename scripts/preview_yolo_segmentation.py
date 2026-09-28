@@ -10,10 +10,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data", default="internet_shelf.yaml")
+    parser.add_argument("--data", default="shelf.yaml")
     parser.add_argument("--split", choices=("train", "val", "test"), default="train")
     parser.add_argument("--count", type=int, default=6)
-    parser.add_argument("--output", default="debug_internet_shelf/preview.jpg")
+    parser.add_argument("--output", default="runs/label_previews/preview.jpg")
     args = parser.parse_args()
 
     config_path = (ROOT / args.data).resolve()

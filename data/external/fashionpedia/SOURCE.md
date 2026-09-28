@@ -7,7 +7,9 @@
 - Annotation/ontology license: CC BY 4.0
 - Image rights: retained by the original image sources; see the official terms page
 
-## Local source files
+## Source files recorded during the original conversion
+
+This is a provenance record, not a fresh-clone setup guide. These raw files are not included in GitHub and need not be downloaded to continue. Restore the prepared subset with [DRIVE_DOWNLOAD.md](../../../DRIVE_DOWNLOAD.md); do not rerun conversion/subset creation for the current workflow.
 
 | File | Bytes | SHA-256 |
 |---|---:|---|

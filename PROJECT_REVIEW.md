@@ -54,8 +54,10 @@ Aşağıdaki Drive yolları `/content/drive/MyDrive/clothing-shelf-ai-transfer/`
 
 GitHub klonunda ayrıca iki başlangıç/referans checkpoint bulunur:
 
-- `runs/segment/runs/deepfashion2_7class/test_3epoch-2/weights/best.pt`.
-- `runs/shelf_7class/finetune_20260910_143218/weights/best.pt`.
+| Referans model yolu | SHA-256 |
+|---|---|
+| `runs/segment/runs/deepfashion2_7class/test_3epoch-2/weights/best.pt` | `3a39fbea6f9f5077c58414e02bc39f7f2a592edccf65a23165664e36b5dd72d6` |
+| `runs/shelf_7class/finetune_20260910_143218/weights/best.pt` | `b08db72eb1dd5518c9113515518a850a8cfa6dbab36e48ce79fe24a7f418274d` |
 
 Bu iki dosya bugün yerel CPU ortamında yüklendi; görev `segment`, sınıf sırası yukarıdaki sözleşmeyle aynı. **Son Colab checkpoint'leri klonla otomatik gelmez** ve bu incelemede yerel olarak yeniden yüklenmedi. Drive'dan alınan checkpoint de tahminden önce görev ve sınıf sırası açısından doğrulanmalıdır.
 
@@ -109,11 +111,13 @@ Yeni eğitim kararı öncesinde modeller aynı görseller, çözünürlük ve e�
 | `scripts/test_shelf_workflow.py` | Yedi sentetik doğrulama testi |
 | `scripts/download_drive_assets.py` | Paylaşılan Drive dosyalarını seçerek indirme, SHA-256/CRC ve hazır dataset geri alma; varsayılan yalnız listeleme |
 | `scripts/test_drive_download.py` | Çevrimdışı indirme ve güvenli arşiv açma testleri |
-| `notebooks/clothing_machine_learning.ipynb` | Colab çalışma hücrelerinin kayıtlı kopyası; çıktı hücreleri temizlenmiş |
+| `scripts/test_repo_consistency.py` | Doküman bağlantıları, Python örnekleri, CLI dataset varsayılanları ve notebook arşiv uyarısı için çevrimdışı testler |
+| `notebooks/clothing_machine_learning.ipynb` | Geçmiş Colab çalışma hücrelerinin arşivi; ilk hücrede uyarı, çıktı hücreleri temizlenmiş |
 
 Koddan doğrulanan sınırlar:
 
-- `train_shelf.py` varsayılanları `shelf.yaml`, `device=mps`, `imgsz=640`, `epochs=30` şeklinde kalıyor. Colab veya Windows'ta argümansız çalıştırmayın; cihazı, dataset'i ve modeli açıkça seçin. Dokümanı güncellemek scriptin varsayılanlarını değiştirmez.
+- `train_shelf.py` varsayılanları `shelf.yaml`, `device=mps`, `imgsz=640`, `epochs=30` şeklinde kalıyor. Colab veya Windows'ta argümansız çalıştırmayın; cihazı, dataset'i ve modeli açıkça seçin. Bu temizlikte eğitim cihazı ve hiperparametre varsayılanları değiştirilmedi.
+- Dataset kontrolü, değerlendirme ve etiket önizlemesinin varsayılanı `shelf.yaml` raf şablonudur; hazır subset'ler için `--data` açıkça verilir. `shelf_7class.yaml` ve kullanılmayan aRTF yapılandırması kaldırıldı.
 - `read_config`, YAML köküne göre dataset yolunu mutlaklaştırır. Doğrudan Ultralytics kullanırken de doğru mutlak dataset yolunu sağlayın; `/content/datasets` altına yanlış yönlenme tekrar yaşanmamalı.
 - Doğrulayıcı benzer ama byte düzeyinde farklı fotoğrafları, yanlış çizilmiş maskeleri veya bütün poligon kendisiyle kesişmelerini garantiyle yakalamaz.
 - `build_7class_subset.py` hedef çıktı klasörlerini silerek yeniden oluşturur ve çok parçalı instance'ta en büyük poligonu seçer. Hazır aktarım verisini geri almak için çalıştırılmaz; import gerektirmeyen kod incelemesiyle kontrol edildi.
@@ -132,6 +136,7 @@ Bu güncelleme sırasında yapılanlar:
 - `scripts/test_shelf_workflow.py`: 7 test geçti.
 - Colab metrikleri ve ayarlar depodaki kayıtlarla karşılaştırıldı; yeni model validation veya raf inference çalıştırılmadı.
 - Paylaşılan Drive'da iki dataset, iki Colab `best.pt`, koşu kayıtları ve üç orijinal test görseli görüldü. Yalnız iki küçük checksum dosyası indirildi; Colab modelleri yeniden yüklenmedi. İndirme aracı için 14 çevrimdışı test geçti.
+- Son repo temizliğinde toplam 26 çevrimdışı test, kalan 14 Python dosyasının sözdizimi ve altı aktif CLI yardım komutu başarılı. Dokümanların yerel bağlantıları ve Python/PowerShell örneklerinin sözdizimi kontrol edildi. Fashionpedia tekrar tam kontrolden geçti; depodaki Fashionpedia referansıyla CPU dry-run başarılı. İki referans modelin SHA-256 değerleri değişmedi.
 - Yeni eğitim ve benchmark başlatılmadı.
 
 ## 8. GitHub / Drive'dan devam

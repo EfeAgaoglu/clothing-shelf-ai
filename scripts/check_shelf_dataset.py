@@ -6,7 +6,7 @@ from shelf_utils import read_config, validate_dataset
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data', default='shelf_7class.yaml')
+    parser.add_argument('--data', default='shelf.yaml')
     args = parser.parse_args()
     try:
         report = validate_dataset(read_config(args.data))

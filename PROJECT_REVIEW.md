@@ -32,7 +32,7 @@ Sınıf sözleşmesi bütün dataset ve checkpoint'lerde aynı kalmalıdır:
 
 Birleşik küme, iki dataset'in kendi train ve validation ayrımlarını koruyarak hazırlandı; aynı sınıf ID'leri kullanıldı. Datasetlerin birleştirilmesi, modellerin paralel eğitilmesi değil, tek modelin iki kaynaktan örneklerle eğitilmesidir.
 
-Büyük datasetler GitHub'da değildir. Bu Windows çalışma alanında Fashionpedia subset'i mevcut ve yeniden doğrulandı: `ready: true`, 10.000 train, 1.143 val, `errors: []`, `warnings: []`. DeepFashion2 ve karma dataset bu yerel ortamda mevcut değil; Colab'da kullanmak için Drive arşivlerinden geri alınmalıdır. Kaydedilmiş notebook ve aktarım kontrolleri bu iki dataset'in Colab'daki hazırlığını belgeliyor; bu incelemede Drive'a bağlanılarak tekrar kontrol edilmedi.
+Büyük datasetler GitHub'da değildir. Bu Windows çalışma alanında Fashionpedia subset'i mevcut ve yeniden doğrulandı: `ready: true`, 10.000 train, 1.143 val, `errors: []`, `warnings: []`. DeepFashion2 ve karma dataset bu yerel ortamda mevcut değil; Colab'da kullanmak için Drive arşivlerinden geri alınmalıdır. 28 Eylül'de paylaşılan Drive klasöründe iki ZIP ve checksum dosyalarının varlığı ayrıca görüldü; indirilen iki checksum kaydı sabit SHA-256 değerleriyle eşleşti. Bu son envanter kontrolünde büyük ZIP'ler indirilip yeniden açılmadı. [Seçerek indirme rehberi](DRIVE_DOWNLOAD.md), indirme sonrasında hash/CRC ve tam dataset doğrulaması yapar.
 
 Drive aktarım klasörü `clothing-shelf-ai-transfer` altında gerekli arşivler:
 
@@ -107,6 +107,8 @@ Yeni eğitim kararı öncesinde modeller aynı görseller, çözünürlük ve e�
 | `scripts/preview_yolo_segmentation.py` | Dataset etiketlerinin görsel incelemesi |
 | `scripts/shelf_utils.py` | Sınıf sözleşmesi, yol çözümü, cihaz/model ve dataset kontrolleri |
 | `scripts/test_shelf_workflow.py` | Yedi sentetik doğrulama testi |
+| `scripts/download_drive_assets.py` | Paylaşılan Drive dosyalarını seçerek indirme, SHA-256/CRC ve hazır dataset geri alma; varsayılan yalnız listeleme |
+| `scripts/test_drive_download.py` | Çevrimdışı indirme ve güvenli arşiv açma testleri |
 | `notebooks/clothing_machine_learning.ipynb` | Colab çalışma hücrelerinin kayıtlı kopyası; çıktı hücreleri temizlenmiş |
 
 Koddan doğrulanan sınırlar:
@@ -129,10 +131,11 @@ Bu güncelleme sırasında yapılanlar:
 - Depodaki iki referans checkpoint, doğru segmentasyon görevi ve yedi sınıfla başarıyla yüklendi.
 - `scripts/test_shelf_workflow.py`: 7 test geçti.
 - Colab metrikleri ve ayarlar depodaki kayıtlarla karşılaştırıldı; yeni model validation veya raf inference çalıştırılmadı.
+- Paylaşılan Drive'da iki dataset, iki Colab `best.pt`, koşu kayıtları ve üç orijinal test görseli görüldü. Yalnız iki küçük checksum dosyası indirildi; Colab modelleri yeniden yüklenmedi. İndirme aracı için 14 çevrimdışı test geçti.
 - Yeni eğitim ve benchmark başlatılmadı.
 
 ## 8. GitHub / Drive'dan devam
 
 Görsel karşılaştırması için GitHub kodu, Drive'daki iki Colab checkpoint'i ve orijinal maskesiz test görselleri yeterlidir; dataset arşivleri gerekmez. Ek eğitim hazırlığı için hazır dataset arşivleri de geri alınır, SHA-256 ve dataset kontrolleri yapılır, ardından yalnız dry-run çalıştırılır. Kullanıcı açıkça onaylamadan `--execute` kullanılmaz.
 
-[COLAB_CONTINUE.md](COLAB_CONTINUE.md) bu işlemleri çalıştırılabilir hücrelerle anlatır. Yeni ağırlıklar ve datasetler Drive'da; kaynak kod, temizlenmiş notebook ve küçük deney kayıtları GitHub'da tutulur. Token, `.venv`, `data/`, aktarım ZIP'leri ve yeni checkpoint'ler topluca Git'e eklenmez. Güncel olmayan araçların kaldırılması ve geri alma bilgileri [temizlik kaydındadır](PROJECT_CLEANUP.md).
+[COLAB_CONTINUE.md](COLAB_CONTINUE.md) kişisel Drive bağlantısı ile devamı, [DRIVE_DOWNLOAD.md](DRIVE_DOWNLOAD.md) paylaşılan bağlantılardan doğrudan indirmeyi çalıştırılabilir hücrelerle anlatır. Yeni ağırlıklar ve datasetler Drive'da; kaynak kod, temizlenmiş notebook ve küçük deney kayıtları GitHub'da tutulur. Herkese açık erişim, dataset/görselleri yeniden dağıtma izni olarak doğrulanmış değildir; asıl kaynak koşulları geçerlidir. Token, `.venv`, `data/`, aktarım ZIP'leri ve yeni checkpoint'ler topluca Git'e eklenmez. Güncel olmayan araçların kaldırılması ve geri alma bilgileri [temizlik kaydındadır](PROJECT_CLEANUP.md).

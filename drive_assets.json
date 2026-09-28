@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-09-28",
+  "folder_url": "https://drive.google.com/drive/folders/1HUMyWWL6uGnDtQXR5A6O_B6uwSTcDKcL",
+  "redistribution_permission": "not_verified",
+  "assets": {
+    "fashionpedia": {
+      "kind": "dataset",
+      "id": "1CcNss1cNZPqz_95FtP5RVmfhJRiRwwqp",
+      "path": "transfer/fashionpedia_balanced_10k_windows.zip",
+      "sha256": "b2b4179c1a135aefa21e20efc4defe16b2adf810551d8d1a45796c1b0ff44add",
+      "checksum_id": "1vKKl81WN87xiiHIvPYJgXmQPTAdUleos",
+      "dataset": "fashionpedia_balanced_10k",
+      "counts": {
+        "train": 10000,
+        "val": 1143
+      }
+    },
+    "deepfashion2": {
+      "kind": "dataset",
+      "id": "1719jkrHjD6Egq4_HqKhXxlZLkIk2PAjs",
+      "path": "transfer/deepfashion2_7class_10k2k.zip",
+      "sha256": "766710e3de61e5f094ad261a64674cfaea395001089c836fee0857eabb95968a",
+      "checksum_id": "1f8-3ndrEMlx4tuREWihRpa29fTJjIvAA",
+      "dataset": "deepfashion2_yolo_7class",
+      "counts": {
+        "train": 10000,
+        "val": 2000
+      }
+    },
+    "fashionpedia_model": {
+      "kind": "checkpoint",
+      "id": "1IY695U_jSEpjVvnotpb19DdDSBQHdqD2",
+      "path": "transfer/trained_runs/finetune_20260923_093619/weights/best.pt",
+      "sha256": null
+    },
+    "mixed_model": {
+      "kind": "checkpoint",
+      "id": "1zOZoK_Z7MdaJiW96bPdb73BuDAaWX5AG",
+      "path": "transfer/trained_runs/mixed_df2_fp_2epoch_20260923_110902/weights/best.pt",
+      "sha256": null
+    },
+    "shelf_pexels": {
+      "kind": "image",
+      "id": "12toKE2tOrOi3uzRzQjcgjN2X3M9R5Xe2",
+      "path": "transfer/shelf_eval_images/pexels-minasenishino-29210804.jpg",
+      "sha256": null
+    },
+    "shelf_knitwear": {
+      "kind": "image",
+      "id": "12K4N02T1fb_xhQ910iMB5AFNvAyHhAaU",
+      "path": "transfer/shelf_eval_images/photo-1709417596263-a7a965e73314.avif",
+      "sha256": null
+    },
+    "shelf_store": {
+      "kind": "image",
+      "id": "166lUefPBoYpAAaw7WFEoy6x_ApZpfySg",
+      "path": "transfer/shelf_eval_images/photo-1766934587214-86e21b3ae093.avif",
+      "sha256": null
+    }
+  }
+}

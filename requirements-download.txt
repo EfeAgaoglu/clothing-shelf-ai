@@ -1,0 +1,2 @@
+# Optional public Google Drive downloader; does not change torch/Ultralytics.
+gdown==6.4.0

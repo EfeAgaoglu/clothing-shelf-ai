@@ -2,6 +2,8 @@
 
 Güncelleme: 28 Eylül 2026. Bu rehber yeni bir Colab oturumunda kodu, kayıtlı modelleri ve hazır veriyi geri almayı anlatır. Kurulum, görsel karşılaştırması ve dry-run hücreleri eğitim başlatmaz. Notebook'ta **Tümünü çalıştır** kullanmayın; geçmiş eğitim hücrelerini yalnızca yeni eğitim kararı verildiğinde çalıştırın.
 
+**Paylaşılan klasör alternatifi:** [DRIVE_DOWNLOAD.md](DRIVE_DOWNLOAD.md), [aktarım bağlantısındaki](https://drive.google.com/drive/folders/1HUMyWWL6uGnDtQXR5A6O_B6uwSTcDKcL) modelleri/görselleri ve isteğe bağlı datasetleri doğrudan indirir; kendi Drive'ınızı bağlamanız gerekmez. Bu alternatifi seçerseniz burada 2–3. bölümlerdeki kişisel Drive kurulumu yerine indirme rehberinin hücrelerini kullanın; `TRANSFER = ROOT / "transfer"` olur. Ardından buradaki 4. bölüm karşılaştırmasını ve gerekiyorsa 6. bölüm dry-run'ını kullanabilirsiniz. Çıktılar yerel Colab diskine gelir; oturum bitmeden indirin veya kendi Drive'ınıza kaydedin.
+
 ## 1. Hangi dosya nerede?
 
 GitHub kaynak kodunu ve yapılandırmaları saklar. Colab kaydı 28 Eylül 2026'da `main` dalına birleştirildi: `notebooks/clothing_machine_learning.ipynb` ve `reports/colab/20260928_100522/` altında notebook, `results.csv`, `args.yaml` ve deney özeti bulunur. Bu kayıt için yeni klonda `main` dalını kullanabilirsiniz. Daha sonra ayrı bir ilerleme dalı açılıp henüz birleştirilmediyse o dalı ayrıca seçin.
@@ -19,7 +21,7 @@ Aşağıdaki yollar bu klasöre göredir:
 | `trained_runs/mixed_df2_fp_2epoch_20260923_110902/weights/best.pt` | Son karma deney: DeepFashion2 + Fashionpedia, 2 epoch. Ek eğitim için başlangıç veya karşılaştırma adayı. |
 | `trained_runs/finetune_20260923_093619/weights/best.pt` | Colab'daki Fashionpedia deneyi; karşılaştırma modeli. |
 | Her iki koşunun `results.csv` ve `args.yaml` dosyaları | Metrikler ve kullanılan ayarların kaydı. `args.yaml` içindeki eski `/content` yolları yeni oturumda yeniden hazırlanır. |
-| Koşunun `weights/last.pt` dosyası, varsa | Kesintili eğitimi sürdürmek için ancak gerekli eğitim durumu da checkpoint'te korunmuşsa kullanılabilir. Son kontrolde `last.pt` yeniden doğrulanmadı. |
+| Koşunun `weights/last.pt` dosyası | Her iki koşunun paylaşılan Drive klasöründe görüldü; içeriği yüklenmedi. Kesintili eğitimi sürdürmek için ancak gerekli eğitim durumu da checkpoint'te korunmuşsa kullanılabilir. |
 | `fashionpedia_balanced_10k_windows.zip` ve `.zip.sha256` | Hazır Fashionpedia subset'i: 10.000 train, 1.143 val. Eğitim için gerekir. |
 | `deepfashion2_7class_10k2k.zip` ve `.zip.sha256` | Hazır DeepFashion2 subset'i: 10.000 train, 2.000 val; görüntü + etiket toplamı 24.000 dosya. Dosya adı kaydedilen notebook'tan doğrulandı. |
 | `shelf_eval_images/` | Orijinal, maskesiz raf/askılık test görselleri. Karşılaştırma için kullanılır; eğitim verisi değildir. |

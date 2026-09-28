@@ -7,6 +7,7 @@ YOLO26l-seg ile yedi giysi sınıfı (`top`, `outwear`, `sleeveless_top`, `short
 - [Windows AMD bilgisayarda devam](WINDOWS_CONTINUE.md)
 - [Raf dataseti ve eğitim rehberi](README_SHELF.md)
 - [Proje incelemesi](PROJECT_REVIEW.md)
+- [Kullanılmayan dosyaların temizliği ve geri alma bilgileri](PROJECT_CLEANUP.md)
 
 Depodaki eski Fashionpedia referans modeliyle yerel test:
 

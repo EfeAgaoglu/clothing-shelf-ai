@@ -1,5 +1,7 @@
 # Proje incelemesi — 10 Eylül 2026
 
+Bu dosya 10 Eylül'deki incelemenin tarihsel kaydıdır. 28 Eylül'deki temizlikte kullanılmayan eski deneme scriptleri ve 13 sınıflı yapılandırma kaldırıldı; aşağıdaki dosya listesi o günkü durumu anlatır. Güncel araçlar ve geri alma bilgileri [temizlik kaydında](PROJECT_CLEANUP.md), Colab devam adımları [COLAB_CONTINUE.md](COLAB_CONTINUE.md) içindedir.
+
 ## Doğrulanan durum
 
 - `.venv`: Python 3.11, torch 2.14.0, ultralytics 8.4.144. Bu araç oturumunda MPS kullanılabilirliği False; önceki eğitim args.yaml kayıtlarında `device: mps`.

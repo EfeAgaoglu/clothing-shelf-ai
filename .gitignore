@@ -11,6 +11,9 @@ __pycache__/
 # Datasets and source archives are downloaded or transferred separately.
 # Converted Fashionpedia images are absolute symlinks and cannot be cloned portably.
 /data/
+# Transfer archives at the project root also stay out of Git.
+/*.zip
+/*.zip.sha256
 
 # Training logs, predictions and checkpoints are generated locally.
 # The two essential best.pt files are staged explicitly for the initial commit.

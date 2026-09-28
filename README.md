@@ -5,7 +5,7 @@ YOLO26l-seg ile yedi giysi sınıfı (`top`, `outwear`, `sleeveless_top`, `short
 - [GitHub ve Google Drive'dan Colab'da devam: kurulum, karşılaştırma ve eğitim hazırlığı](COLAB_CONTINUE.md)
 - [Başka cihazda kurulum ve devam etme](README_GITHUB.md)
 - [Raf dataseti ve eğitim rehberi](README_SHELF.md)
-- [Proje incelemesi](PROJECT_REVIEW.md)
+- [Güncel proje durumu ve teknik değerlendirme](PROJECT_REVIEW.md)
 - [Kullanılmayan dosyaların temizliği ve geri alma bilgileri](PROJECT_CLEANUP.md)
 
 Depodaki eski Fashionpedia referans modeliyle yerel test:

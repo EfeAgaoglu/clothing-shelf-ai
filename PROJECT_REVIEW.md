@@ -1,78 +1,138 @@
-# Proje incelemesi — 10 Eylül 2026
+# Güncel proje durumu ve teknik değerlendirme
 
-Bu dosya 10 Eylül'deki incelemenin tarihsel kaydıdır. 28 Eylül'deki temizlikte kullanılmayan eski deneme scriptleri ve 13 sınıflı yapılandırma kaldırıldı; aşağıdaki dosya listesi o günkü durumu anlatır. Güncel araçlar ve geri alma bilgileri [temizlik kaydında](PROJECT_CLEANUP.md), Colab devam adımları [COLAB_CONTINUE.md](COLAB_CONTINUE.md) içindedir.
+Güncelleme: **28 Eylül 2026**. Bu sayfa aktif dosyaları, tamamlanan Colab eğitimlerini ve bugün doğrulanan durumu anlatır. Adım adım kurulum için [Colab devam rehberini](COLAB_CONTINUE.md), proje ilerleyişinin anlatımı için [Word raporunu](Proje%20Ge%C3%A7mi%C5%9Fi%20ve%20Yap%C4%B1lanlar.docx) kullanın.
 
-## Doğrulanan durum
+## 1. Hedef ve mevcut sonuç
 
-- `.venv`: Python 3.11, torch 2.14.0, ultralytics 8.4.144. Bu araç oturumunda MPS kullanılabilirliği False; önceki eğitim args.yaml kayıtlarında `device: mps`.
-- Belirtilen `best.pt` başarıyla yüklendi: task `segment`, ölçek `l`, başlık `Segment26`, beklenen 7 sınıf aynı sırada.
-- 7 sınıflı subset: 10.000 train, 2.000 val. Tüm görüntüler PIL verify kontrolünden geçti; eksik/yetim etiket, bozuk link, geçersiz sınıf/koordinat, dejenere poligon ve splitler arası byte düzeyinde kopya bulunmadı.
-- Bütün 12.000 etiket ham JSON ve görüntü boyutları kullanılarak mevcut dönüştürücünün algoritmasıyla yeniden hesaplandı; **0 uyuşmazlık**. Bu, dönüştürme tutarlılığıdır; tüm maskelerin anlamsal/görsel doğruluğu iddiası değildir.
-- Train'de 11.236, val'de 351 nesnede birden fazla geçerli kaynak poligondan yalnızca en büyüğü seçilmiş. Bu sayılar nesne sayısıdır. Diğer görünür parçalar eğitim maskesine katılmıyor. Mevcut dataset korunmuştur; gelecekte çok parçalı maskelerin dönüşümü ayrı sürümde ele alınmalı.
+Amaç, raf/askılık üzerindeki her görünür kıyafeti ayrı bir instance olarak maskelemek ve yedi sınıftan birine atamaktır. Kullanılan mimari YOLO26l-seg'dir; depodaki iki referans checkpoint 31.384.201 parametre içerir.
 
-| Sınıf | Train instance | Val instance |
-|---|---:|---:|
-| top | 5577 | 1180 |
-| outwear | 694 | 133 |
-| sleeveless_top | 987 | 163 |
-| shorts | 1885 | 249 |
-| trousers | 2865 | 576 |
-| skirt | 1603 | 417 |
-| dress | 2620 | 556 |
+Google Colab / Tesla T4 üzerinde Fashionpedia ile 1 epoch fine-tuning ve ardından DeepFashion2 + Fashionpedia birleşimiyle 2 epoch eğitim tamamlandı. **Son tamamlanan deney karma 2 epoch modelidir; raf kullanımına hazır olduğu doğrulanmış bir model değildir.** Raf karşılaştırmalarında yanlış geniş maskeler, yanlış sınıflar ve kaçırılan ürünler devam ediyor. Bu nedenle yalnızca daha fazla epoch çalıştırmanın problemi çözeceği söylenemez.
 
-`top`, `outwear` sayısının yaklaşık 8 katı. Raf verisinde sınıf ve çekim çeşitliliğini ayrıca izlemek gerekir.
+Sınıf sözleşmesi bütün dataset ve checkpoint'lerde aynı kalmalıdır:
 
-## Eğitim ve tahmin
+| ID | Sınıf | DeepFashion2 kaynak category_id |
+|---|---|---|
+| 0 | top | 1, 2 |
+| 1 | outwear | 3, 4 |
+| 2 | sleeveless_top | 5, 6 |
+| 3 | shorts | 7 |
+| 4 | trousers | 8 |
+| 5 | skirt | 9 |
+| 6 | dress | 10, 11, 12, 13 |
 
-Tamamlanan koşunun `results.csv` dosyasında 3 epoch var; üçüncü epoch sonunda toplam süre 23.405,7 saniye (~6,50 saat). Kutu mAP50: 0,63920; kutu mAP50-95: 0,49244; maske mAP50: 0,62571; maske mAP50-95: 0,43425. Bunlar DeepFashion2 validation metrikleri, raf performansı değil. Metrikler üç epoch boyunca artıyor; uzun eğitimin kazanımı bu kayıtla kesinleştirilemez.
+`outwear` yazımı değiştirilmemelidir; isim ve ID sırası modelle birebir eşleşmelidir.
 
-Checkpoint ile CPU üzerinde `save=False` tahminler tekrarlandı:
+## 2. Kullanılan hazır datasetler
 
-| Görüntü | imgsz | conf eşiği | Sonuç |
+| Dataset | Train görüntüsü | Validation görüntüsü | Hazır veri yolu |
 |---|---:|---:|---|
-| test_images/test.jpg | 512 | 0,05 | top %89,29; trousers %74,29 |
-| test_images/shelf_test.jpg | 1024 | 0,05 | top %8,73 |
+| DeepFashion2, 7 sınıf | 10.000 | 2.000 | `data/deepfashion2_yolo_7class` |
+| Fashionpedia subset, 7 sınıf | 10.000 | 1.143 | `data/fashionpedia_balanced_10k` |
+| DeepFashion2 + Fashionpedia birleşimi | 20.000 | 3.143 | `data/mixed_df2_fashionpedia_20k` |
 
-İkisinde de maske üretildi. Verilen sonuçlar yeniden üretildi. İnsan üzerindeki kıyafetlerle raf üzerindeki katlı/örtüşen ürünler arasındaki görüntü farkı olası temel etkendir; tek raf fotoğrafı ve etiketsiz test ile neden kesin kanıtlanamaz. Eğitim 512, raf tahmini 1024 çözünürlükte; karşılaştırmalı ölçümlerde bunu sabitlemek gerekir. Confidence eşiğini 0,05'e indirmek düşük skorlu çıktıyı gösterir, modelin öğrendiklerini iyileştirmez.
+Birleşik küme, iki dataset'in kendi train ve validation ayrımlarını koruyarak hazırlandı; aynı sınıf ID'leri kullanıldı. Datasetlerin birleştirilmesi, modellerin paralel eğitilmesi değil, tek modelin iki kaynaktan örneklerle eğitilmesidir.
 
-## Mevcut dosyalar ve riskler
+Büyük datasetler GitHub'da değildir. Bu Windows çalışma alanında Fashionpedia subset'i mevcut ve yeniden doğrulandı: `ready: true`, 10.000 train, 1.143 val, `errors: []`, `warnings: []`. DeepFashion2 ve karma dataset bu yerel ortamda mevcut değil; Colab'da kullanmak için Drive arşivlerinden geri alınmalıdır. Kaydedilmiş notebook ve aktarım kontrolleri bu iki dataset'in Colab'daki hazırlığını belgeliyor; bu incelemede Drive'a bağlanılarak tekrar kontrol edilmedi.
 
-| Dosya/klasör | İnceleme |
+Drive aktarım klasörü `clothing-shelf-ai-transfer` altında gerekli arşivler:
+
+- `fashionpedia_balanced_10k_windows.zip` ve `.zip.sha256`.
+- `deepfashion2_7class_10k2k.zip` ve `.zip.sha256`.
+
+Hazır subset'leri yeniden üretmeyin. SHA-256 kontrolü, açma işlemi ve karma veri hazırlığı [Colab rehberinin 5–6. bölümlerindedir](COLAB_CONTINUE.md#5-yalnız-eğitim-hazırlığı-için-hazır-datasetleri-geri-al). Dataset'in sayısal olarak geçerli olması, her maskenin ürüne anlamsal olarak doğru çizildiğini garanti etmez.
+
+Fashionpedia subset'i nadir sınıfları önceleyen seçimle hazırlandı; eşit sınıf dağılımı değildir. Örneğin validation'da `sleeveless_top` yalnızca 22 instance içerir; küçük sınıfların sonuçlarını genel ortalamadan ayrı değerlendirmek gerekir.
+
+## 3. Checkpoint seçimi ve saklama
+
+Aşağıdaki Drive yolları `/content/drive/MyDrive/clothing-shelf-ai-transfer/` klasörüne göredir:
+
+| Model | Konum | Rol |
+|---|---|---|
+| Karma, 2 epoch | `trained_runs/mixed_df2_fp_2epoch_20260923_110902/weights/best.pt` | Son deney; ek eğitim başlangıcı ve karşılaştırma adayı |
+| Fashionpedia Colab, 1 epoch | `trained_runs/finetune_20260923_093619/weights/best.pt` | Karma modelle karşılaştırılacak model |
+
+GitHub klonunda ayrıca iki başlangıç/referans checkpoint bulunur:
+
+- `runs/segment/runs/deepfashion2_7class/test_3epoch-2/weights/best.pt`.
+- `runs/shelf_7class/finetune_20260910_143218/weights/best.pt`.
+
+Bu iki dosya bugün yerel CPU ortamında yüklendi; görev `segment`, sınıf sırası yukarıdaki sözleşmeyle aynı. **Son Colab checkpoint'leri klonla otomatik gelmez** ve bu incelemede yerel olarak yeniden yüklenmedi. Drive'dan alınan checkpoint de tahminden önce görev ve sınıf sırası açısından doğrulanmalıdır.
+
+`predict_shelf.py` varsayılanı depodaki Fashionpedia referansı; `train_shelf.py` ve `evaluate_shelf.py` varsayılanı DeepFashion2 referansıdır. Bu yüzden güncel deneylerde **`--model` açıkça belirtilmelidir**. Benchmark ağırlıkları eğitim başlangıcı olarak kullanılmaz.
+
+`best.pt` ile ek fine-tuning, öğrenilmiş ağırlıklardan yeni optimizer ve takvimle başlar (`resume=False`). Kesintili eğitimin tam durumunu sürdürmek farklıdır: eğitim durumunu koruyan checkpoint ve `resume=True` gerekir. Mevcut `train_shelf.py` resume seçeneği sunmaz; tamamlanan koşudaki `last.pt` dosyasının adı tek başına gerçek resume garantisi değildir.
+
+## 4. Son Colab eğitim kayıtları
+
+Fashionpedia Colab koşusu depodaki Fashionpedia referansından; karma koşu ise bu yeni Colab Fashionpedia checkpoint'inden başladı. Her iki koşuda `device=0`, `batch=1`, `imgsz=512`, `optimizer=AdamW`, `lr0=0.0001`, `seed=42`, `workers=0`, `amp=True`, `resume=False` kullanıldı. Mosaic, mixup ve copy-paste kapalıydı. Tam ayarlar koşuların `args.yaml` dosyalarında saklanır.
+
+Aşağıdaki değerler ilgili `results.csv` dosyasının **son epoch satırıdır**; checkpoint'ler bu incelemede yeniden validation'a sokulmadı:
+
+| Koşu | Epoch | Box mAP50 | Box mAP50–95 | Mask mAP50 | Mask mAP50–95 | CSV'deki birikimli süre |
+|---|---:|---:|---:|---:|---:|---|
+| Fashionpedia Colab | 1 | %65,92 | %53,76 | %64,20 | %50,00 | 2.089,89 sn ≈ 34 dk 50 sn |
+| Karma DeepFashion2 + Fashionpedia | 2 | %67,38 | %53,86 | %65,26 | %46,81 | 9.109,81 sn ≈ 2 sa 31 dk 50 sn |
+
+Kaynak kayıtlar:
+
+- Fashionpedia: [results.csv](reports/colab/20260928_100522/finetune_20260923_093619/results.csv), [args.yaml](reports/colab/20260928_100522/finetune_20260923_093619/args.yaml).
+- Karma: [results.csv](reports/colab/20260928_100522/mixed_df2_fp_2epoch_20260923_110902/results.csv), [args.yaml](reports/colab/20260928_100522/mixed_df2_fp_2epoch_20260923_110902/args.yaml).
+
+**Validation kümeleri farklıdır:** ilk koşu Fashionpedia, ikinci koşu birleşik validation kullanır. Bu tablodan karma modelin Fashionpedia modelinden üstün veya kötü olduğu sonucu doğrudan çıkarılamaz. Bu metrikler raf başarısını da ölçmez. Süreler kaydedilmiş koşulara aittir; veri aktarımı/kurulum dahil yeni Colab oturumunun toplam süresini veya başka GPU'nun hızını garanti etmez.
+
+## 5. Raf görüntülerindeki bulgular ve sonraki karar
+
+Paylaşılan tam görüntü ve parçalı tahmin karşılaştırmalarında:
+
+- Birden fazla kıyafet, duvar veya raf bölgesi tek geniş maskede birleşebiliyor.
+- Giysi türleri karışıyor; pantolon görüntüsünde farklı sınıflar üretilebiliyor.
+- Bazı görüntülerde hiç tespit yok; bazılarında yalnızca düşük confidence çıktılar var.
+- Parçalı tahmin bazı skorları artırsa da görüntü parçalarına benzeyen yanlış kutu/maskeler üretiyor; tek başına çözüm olarak doğrulanmadı.
+
+İnsan üzerindeki eğitim verisi ile raf/askılık sahneleri arasındaki alan farkı, örtüşme ve sınırlı görünürlük olası etkenlerdir; tek bir nedene kesin teşhis konulmuş değildir. Etiketsiz görsellerde daha çok kutu veya daha yüksek confidence, daha iyi instance segmentation kanıtı değildir. Mevcut model çıktıları kontrol edilmeden yeni eğitim etiketi olarak kullanılmamalıdır.
+
+Sonraki veri/model adayında kontrol edilecek ölçütler: insan üzerinde olmayan giysiler, hedefe benzer sıkışık/örtüşen raf sahneleri, ayrı instance maskeleri, yedi sınıfa anlamlı eşleme, kullanım lisansı ve train/val ayrımı. Yalnız bounding box etiketi olan bir dataset, maskeli dataset olarak doğrudan kullanılamaz. Tek tek manuel maskeleme zorunlu bir sonraki adım olarak seçilmiş değildir; hazır maskeli veri veya önceden eğitilmiş aday önce incelenmelidir.
+
+Yeni eğitim kararı öncesinde modeller aynı görseller, çözünürlük ve eşikte karşılaştırılmalı; sayısal raf başarısı için bağımsız, doğrulanmış maskeleri olan bir değerlendirme kümesi kullanılmalıdır. Böyle bir raf benchmark'ı şu anda doğrulanmış değil. Eğitime otomatik devam edilmez.
+
+## 6. Aktif araçlar ve dikkat edilmesi gerekenler
+
+| Dosya | Güncel görevi |
 |---|---|
-| scripts/analyze_deepfashion2.py | Ham 13 sınıf istatistiklerini CSV'ye çıkarır; mevcut CSV üzerine yazar. |
-| scripts/deepfashion2_to_yolo_subset.py | İlk 500/100 örneği dönüştürür; eski çıktıları temizlemediği için farklı ayarla tekrar çalıştırmak eski dosyaları bırakabilir. Tek sayıda koordinat ve sınıf aralığı koruması eksik. |
-| scripts/build_large_subset.py | 13 sınıf 10k/2k oluşturur; çıktı klasörlerini `rmtree` ile siler. Tek sayıda koordinat koruması eksik. |
-| scripts/build_7class_subset.py | 13→7 map doğru, tek sayıda koordinatı eler. Çıktıları `rmtree` ile siler; bu incelemede çalıştırılmadı. Shuffle öncesi glob sıralanmadığından seed tek başına makineler arası aynı subset garantisi vermez. En büyük poligon seçimi bilgi kaybettirir. |
-| scripts/check_labels.py, check_7class_labels.py | Birkaç örneğin görsel overlay'ini üretir; bütün datasetin doğrulaması değildir. Import sırasında çalışır ve debug görüntülerini yeniden yazar. |
-| scripts/train_subset.py, train_7class_test.py | Sırasıyla 13/7 sınıf 3 epoch eğitim. Import sırasında eğitim başlatırlar; doğrulamak için import edilmedi. Göreli yollar ve zorunlu MPS başka ortamda sorun çıkarabilir. |
-| predict_7class.py | Doğru checkpoint, raf fotoğrafı, conf=0,05, imgsz=1024. Göreli yol/MPS sabit; import sırasında tahmin ve kayıt yapar. |
-| predict_deepfashion.py | `rglob('best.pt')[-1]` en yeni veya doğru sınıflı modeli garanti etmez. `agnostic_nms=True` sınıflar arası bastırma ayarıdır; etkisi modelin NMS/end-to-end moduna bağlıdır. |
-| predict_test.py, test_model.py | Temel YOLO26 modelini kullanır; 7 sınıflı checkpoint testi değildir. Import yan etkileri vardır. |
-| deepfashion2.yaml | 500/100'lük `deepfashion2_yolo` datasına bağlı; `deepfashion2_yolo_large` kullanılmıyor. |
-| deepfashion2_7class.yaml | Doğru dataset ve doğru sınıf sırası; göreli path çalışma dizinine/Ultralytics ayarlarına bağlı olabilir. |
-| requirements.txt | Tam ortam paketlerinin sürümleri sabitlenmiş; mevcut torch/ultralytics sürümleriyle uyum gözlendi. Temiz ortam kurulumu denenmedi. |
-| data/deepfashion2_raw | Train 191.959 annotation, validation 32.153 annotation. Image dizinlerindeki ek girişler görüntü sayısı olarak yorumlanmadı. |
-| data/deepfashion2_yolo, deepfashion2_yolo_large | Sırasıyla 500/100 ve 10k/2k görüntü/etiket girişi; 13 sınıf geçmiş denemeler korunuyor. Tam etiket taraması yalnızca aktif 7 sınıflı datasette yapıldı. |
-| data/deepfashion2_coco | Üst seviyede alt dizin görülmedi; aktif eğitim YAML'larının hedefi değil. |
-| debug_labels, debug_7class | Geçmiş görsel kontrol çıktıları, korundu. |
-| runs | Önceki eğitim ve tahmin çıktıları korundu. `test_3epoch` yalnızca args kaydı; tamamlanan koşu `test_3epoch-2`. |
-| yolo26l-seg.pt, test_images | Temel ağırlıklar ve iki test fotoğrafı korundu. |
+| `scripts/check_shelf_dataset.py` | Görüntü/etiket, sınıf ID'si, poligon ve splitler arası byte düzeyinde kopya kontrolü |
+| `scripts/predict_shelf.py` | Seçilen checkpoint ile tahmin, sınıf/confidence özeti ve maskeli çıktı |
+| `scripts/train_shelf.py` | Dataset/checkpoint kontrolü; varsayılan dry-run, eğitim için açık `--execute` gerekir |
+| `scripts/evaluate_shelf.py` | Etiketli validation/test kümesinde seçilen checkpoint'in değerlendirilmesi |
+| `scripts/preview_yolo_segmentation.py` | Dataset etiketlerinin görsel incelemesi |
+| `scripts/shelf_utils.py` | Sınıf sözleşmesi, yol çözümü, cihaz/model ve dataset kontrolleri |
+| `scripts/test_shelf_workflow.py` | Yedi sentetik doğrulama testi |
+| `notebooks/clothing_machine_learning.ipynb` | Colab çalışma hücrelerinin kayıtlı kopyası; çıktı hücreleri temizlenmiş |
 
-`runs/segment/runs/...` yolu kurulu Ultralytics'in göreli `project` önüne runs kökü ve görev adını eklemesinden oluşuyor. Yeni script mutlak project yolu kullanıyor. Projede Git deposu bulunmadığından git diff/status ile karşılaştırma yapılamadı; mevcut dosyalara edit uygulanmadı. AGENTS.md talimatı bulunmadı.
+Koddan doğrulanan sınırlar:
 
-## Eklenen hazırlık ve test sonuçları
+- `train_shelf.py` varsayılanları `shelf.yaml`, `device=mps`, `imgsz=640`, `epochs=30` şeklinde kalıyor. Colab veya Windows'ta argümansız çalıştırmayın; cihazı, dataset'i ve modeli açıkça seçin. Dokümanı güncellemek scriptin varsayılanlarını değiştirmez.
+- `read_config`, YAML köküne göre dataset yolunu mutlaklaştırır. Doğrudan Ultralytics kullanırken de doğru mutlak dataset yolunu sağlayın; `/content/datasets` altına yanlış yönlenme tekrar yaşanmamalı.
+- Doğrulayıcı benzer ama byte düzeyinde farklı fotoğrafları, yanlış çizilmiş maskeleri veya bütün poligon kendisiyle kesişmelerini garantiyle yakalamaz.
+- `build_7class_subset.py` hedef çıktı klasörlerini silerek yeniden oluşturur ve çok parçalı instance'ta en büyük poligonu seçer. Hazır aktarım verisini geri almak için çalıştırılmaz; import gerektirmeyen kod incelemesiyle kontrol edildi.
+- GitHub notebook'unda geçmiş eğitim hücreleri bulunur; **Tümünü çalıştır** eğitim başlatabilir. Yalnız gerekli kurulum/karşılaştırma hücrelerini seçin.
 
-`README_SHELF.md` kullanım adımlarını, `shelf_7class.yaml` sınıf sözleşmesini içerir. `shelf_utils.py` ortak kontrol/yol/cihaz/model işlevlerini, `check_shelf_dataset.py` salt okunur veri kontrolünü, `train_shelf.py` açık `--execute` ile fine-tuning'i, `evaluate_shelf.py` checkpoint karşılaştırmasını sağlar. Boş train/val/test görüntü ve etiket klasörleri oluşturuldu. Mevcut kodların riskleri burada belgelendi; geriye dönük davranışları değiştirilmedi.
+## 7. Cihaz ve bu incelemede doğrulanan durum
 
-Çalıştırılan kontroller:
+Ana eğitim akışı Google Colab üzerinden yürütülüyor; son kaydedilmiş eğitimler Tesla T4 ile gerçekleştirildi. Çalışan kayıtlı Colab ortamı Python 3.13.15 / PyTorch 2.11.0+cu128 / Ultralytics 8.4.144 idi; yeni oturumda bu değerler ve CUDA kullanılabilirliği tekrar kontrol edilmelidir. GPU tahsisi önceki oturumla aynı olmak zorunda değildir.
 
-- Tüm mevcut ve yeni Python dosyalarında AST syntax kontrolü: başarılı.
-- `.venv/bin/python scripts/check_shelf_dataset.py --data deepfashion2_7class.yaml`: başarılı, 12.000 görüntü.
-- Ham kaynak → etiket karşılaştırması: 12.000/12.000 uyumlu.
-- `.venv/bin/python scripts/train_shelf.py --dry-run`: checkpoint ve Ultralytics seçenek kontrolü başarılı; boş raf verisi nedeniyle beklenen çıkış kodu 2, eğitim çağrılmadı.
-- `/private/tmp` çalışma dizininden mutlak script yolu ile `train_shelf.py --dry-run --data deepfashion2_7class.yaml`: başarılı, çıkış kodu 0; 12.000 örnek, checkpoint ve seçenekler kontrol edildi, eğitim çağrılmadı. Çalışma dizininden bağımsız yol çözümü doğrulandı.
-- `.venv/bin/python scripts/test_shelf_workflow.py`: 7 test başarılı; bozuk poligonlar, sınıf sırası, eksik etiket, arka plan-only split, split sızıntısı, yinelenen görüntü gövdesi ve geçerli göreli yollar.
-- `.venv/bin/python scripts/evaluate_shelf.py --help`: başarılı.
-- İki gerçek görüntüde checkpoint CPU inference: başarılı, önceki confidence sonuçları yeniden üretildi.
+28 Eylül'de dokümanın kontrol edildiği yerel Windows ortamı Python 3.11.9 / PyTorch 2.14.0+cpu / Ultralytics 8.4.144. CUDA ve MPS kullanılabilirliği `False`; bu ortamda CPU yolu kullanılır. RX 6700 XT, Colab'ın CUDA cihazıyla aynı şekilde seçilemez; bu projede Windows AMD GPU eğitimi doğrulanmış değildir.
 
-Uzun eğitim, kısa eğitim ve tam model validation yeniden çalıştırılmadı. Eğitim adımının ileri/geri yayılımı henüz test edilmedi; raf etiketleri geldikten sonra README'deki bir epoch denemesi bunun içindir.
+Bu güncelleme sırasında yapılanlar:
+
+- Yerel Fashionpedia subset'inde tam salt okunur görüntü/poligon/split kontrolü başarılı; hata ve uyarı yok.
+- Depodaki iki referans checkpoint, doğru segmentasyon görevi ve yedi sınıfla başarıyla yüklendi.
+- `scripts/test_shelf_workflow.py`: 7 test geçti.
+- Colab metrikleri ve ayarlar depodaki kayıtlarla karşılaştırıldı; yeni model validation veya raf inference çalıştırılmadı.
+- Yeni eğitim ve benchmark başlatılmadı.
+
+## 8. GitHub / Drive'dan devam
+
+Görsel karşılaştırması için GitHub kodu, Drive'daki iki Colab checkpoint'i ve orijinal maskesiz test görselleri yeterlidir; dataset arşivleri gerekmez. Ek eğitim hazırlığı için hazır dataset arşivleri de geri alınır, SHA-256 ve dataset kontrolleri yapılır, ardından yalnız dry-run çalıştırılır. Kullanıcı açıkça onaylamadan `--execute` kullanılmaz.
+
+[COLAB_CONTINUE.md](COLAB_CONTINUE.md) bu işlemleri çalıştırılabilir hücrelerle anlatır. Yeni ağırlıklar ve datasetler Drive'da; kaynak kod, temizlenmiş notebook ve küçük deney kayıtları GitHub'da tutulur. Token, `.venv`, `data/`, aktarım ZIP'leri ve yeni checkpoint'ler topluca Git'e eklenmez. Güncel olmayan araçların kaldırılması ve geri alma bilgileri [temizlik kaydındadır](PROJECT_CLEANUP.md).

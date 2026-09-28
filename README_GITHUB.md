@@ -1,5 +1,7 @@
 # Başka cihazda devam etme
 
+28 Eylül 2026 Colab ilerlemesi için [GitHub + Drive devam rehberini](COLAB_CONTINUE.md) kullanın. Aşağıdaki iki ağırlık eski referans modellerdir; Colab'da tamamlanan son karma 2 epoch koşusu ve Fashionpedia koşusu Drive'daki `clothing-shelf-ai-transfer/trained_runs/` altında saklanır. Rehberde son checkpoint seçimi, Drive'dan dosya alma, görsel karşılaştırması, hazır datasetleri geri yükleme ve dry-run adımları bulunur.
+
 Windows RX 6700 XT / Ryzen 5 3600X için [Windows rehberini](WINDOWS_CONTINUE.md) kullanın. Aşağıdaki Unix komutları yerine PowerShell komutları ve bağlantısız dataset taşıma adımları orada bulunur.
 
 Bu depo kodu, YAML yapılandırmalarını, küçük test görsellerini ve iki gerekli eğitilmiş `best.pt` dosyasını taşır. `.venv`, DeepFashion2/Fashionpedia datasetleri, indirilen arşivler, dönüştürülmüş görseller ve diğer eğitim çıktıları GitHub'a konmaz. Özellikle Fashionpedia dönüşümündeki görseller bu bilgisayardaki mutlak yollara işaret eden sembolik bağlantılardır; doğrudan başka cihaza kopyalanmaları güvenilir değildir.

@@ -17,4 +17,3 @@ Depodaki eski Fashionpedia referans modeliyle yerel test:
 
 Son Colab modelini kullanmak için `--model` ile checkpoint yolunu açıkça belirtin. Kendi Drive'ını bağlamak için [Colab rehberini](COLAB_CONTINUE.md), paylaşılan bağlantıdan doğrudan dosya almak için [indirme rehberini](DRIVE_DOWNLOAD.md) izleyin. Görsel karşılaştırması için eğitim datasetleri gerekmez. Ek eğitim için hazır subset'ler ve dataset YAML'ı ayrıca geri alınmalıdır. İndirme aracı eğitim başlatmaz; dataset/görsel erişimi, kaynakların yeniden dağıtım izni anlamına gelmez.
 
-Bu test görselinde model bir gerçek üst giysiyi ve bir yanlış geniş bölgeyi algılıyor. Gerçek raf fotoğraflarında güvenilir sayım için ayrıca raf alanına ait etiketli veri gerekir.
